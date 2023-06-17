@@ -1,0 +1,23 @@
+{
+  "name": "zod-to-graphql",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+   "scripts": {
+    "build": "tsup index.ts --format cjs,esm --dts",
+    "test": "vitest",
+    "lint": "tsc"
+  },
+  "keywords": [],
+  "author": "Lance Mayer",
+  "license": "ISC",
+  "devDependencies": {
+    "@changesets/cli": "^2.26.1",
+    "prettier": "^2.8.8",
+    "tsup": "^6.7.0",
+    "typescript": "^5.1.3",
+    "vitest": "^0.32.0"
+  }
+}
