@@ -36,4 +36,28 @@ describe("format array of strings to graphql query string", () => {
   age
 }`)
 	})
+
+	test("nested two deep to test typing", () => {
+		const keysArray = [
+			"name",
+			["first", ["initial", "name"], "last", ["initial", "name"]],
+			"age",
+		]
+
+		// prettier-ignore
+		expect(stringArrayToGraphqlQuery(keysArray)).toBe(
+`{
+  name {
+    first {
+      initial
+      name
+    }
+    last {
+      initial
+      name
+    }
+  }
+  age
+}`)
+	})
 })
