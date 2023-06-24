@@ -1,5 +1,43 @@
 import { describe, expect, test } from "vitest"
-import { stringArrayToGraphqlQuery } from "../index"
+import { z } from "zod"
+import { stringArrayToGraphqlQuery, zodToKeysArray } from "../index"
+
+describe("generate string gql query string array from zod schema", () => {
+	test("zod object schema with single field generates single string array", () => {
+		const schema = z.object({
+			name: z.string(),
+		})
+
+		const keysArray = zodToKeysArray(schema)
+
+		expect(keysArray).toEqual(["name"])
+	})
+
+	test("zod object schema with two fields generates two string array", () => {
+		const schema = z.object({
+			name: z.string(),
+			age: z.number(),
+		})
+
+		const keysArray = zodToKeysArray(schema)
+
+		expect(keysArray).toEqual(["name", "age"])
+	})
+
+	test("zod object schema with nested fields generates nested string array", () => {
+		const schema = z.object({
+			name: z.object({
+				firstName: z.string(),
+				lastName: z.string(),
+			}),
+			age: z.number(),
+		})
+
+		const keysArray = zodToKeysArray(schema)
+
+		expect(keysArray).toEqual(["name", ["firstName", "lastName"], "age"])
+	})
+})
 
 describe("format array of strings to graphql query string", () => {
 	test("single string array generates valid graphql query", () => {
