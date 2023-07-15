@@ -1,12 +1,21 @@
-import { ZodObject } from "zod"
+import { AnyZodObject, ZodObject } from "zod"
 
 type gqlQueryArray = (string | string[] | gqlQueryArray)[]
 
-const getKeys = (schema: any): gqlQueryArray => {
+const getCleanSchema = (schema: AnyZodObject): AnyZodObject => {
+	return schema.isNullable() || schema.isOptional()
+		? getCleanSchema(schema.unwrap())
+		: schema
+}
+
+const getKeys = (schema: AnyZodObject): gqlQueryArray => {
 	let arr = []
+
 	for (let key in schema) {
-		if (schema[key] instanceof ZodObject) {
-			arr.push(key, getKeys(schema[key].shape))
+		const cleanSchema = getCleanSchema(schema[key])
+
+		if (cleanSchema instanceof ZodObject) {
+			arr.push(key, getKeys(cleanSchema.shape))
 		} else {
 			arr.push(key.toString())
 		}
@@ -15,7 +24,7 @@ const getKeys = (schema: any): gqlQueryArray => {
 	return arr
 }
 
-export const zodToKeysArray = (zodSchema: ZodObject<any>): gqlQueryArray => {
+export const zodToKeysArray = (zodSchema: AnyZodObject): gqlQueryArray => {
 	const schemaShape = zodSchema.shape
 	return getKeys(schemaShape)
 }

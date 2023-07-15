@@ -37,6 +37,82 @@ describe("generate string gql query string array from zod schema", () => {
 
 		expect(keysArray).toEqual(["name", ["firstName", "lastName"], "age"])
 	})
+
+	test("zod object schema with a nullable field", () => {
+		const schema = z.object({
+			name: z.string(),
+			age: z.number().nullable(),
+		})
+
+		const keysArray = zodToKeysArray(schema)
+
+		expect(keysArray).toEqual(["name", "age"])
+	})
+
+	test("zod object schema with a nullable object", () => {
+		const schema = z.object({
+			name: z
+				.object({
+					firstName: z.string(),
+					lastName: z.string(),
+				})
+				.nullable(),
+			age: z.number().nullable(),
+		})
+
+		const keysArray = zodToKeysArray(schema)
+
+		expect(keysArray).toEqual(["name", ["firstName", "lastName"], "age"])
+	})
+
+	test("zod object schema with a optional object", () => {
+		const schema = z.object({
+			name: z
+				.object({
+					firstName: z.string(),
+					lastName: z.string(),
+				})
+				.optional(),
+			age: z.number().nullable(),
+		})
+
+		const keysArray = zodToKeysArray(schema)
+
+		expect(keysArray).toEqual(["name", ["firstName", "lastName"], "age"])
+	})
+
+	test("zod object schema with nullable applied to object twice", () => {
+		const schema = z.object({
+			name: z
+				.object({
+					firstName: z.string(),
+					lastName: z.string(),
+				})
+				.nullable()
+				.nullable(),
+			age: z.number().nullable(),
+		})
+
+		const keysArray = zodToKeysArray(schema)
+
+		expect(keysArray).toEqual(["name", ["firstName", "lastName"], "age"])
+	})
+
+	test("zod object schema with nullish object", () => {
+		const schema = z.object({
+			name: z
+				.object({
+					firstName: z.string(),
+					lastName: z.string(),
+				})
+				.nullish(),
+			age: z.number().nullable(),
+		})
+
+		const keysArray = zodToKeysArray(schema)
+
+		expect(keysArray).toEqual(["name", ["firstName", "lastName"], "age"])
+	})
 })
 
 describe("format array of strings to graphql query string", () => {
